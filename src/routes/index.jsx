@@ -5,8 +5,10 @@ import {Route, Routes, Navigate} from 'react-router-dom';
 
 function RoutePath(){
 
-    const Layout = lazy(()=>import('../container/layout/index'));
+    const Layout = lazy(()=>import('../container/layout'));
     const HomePage = lazy(() => import('../pages/homepage'));
+    const Login = lazy(()=> import('../pages/login'));
+    const SignUp = lazy(()=> import('../pages/signup'));
 
 
     return (
@@ -17,6 +19,9 @@ function RoutePath(){
             <Route path='/' element={<Layout/>}>
                 <Route path='/homepage' element={<HomePage/>}/>
             </Route>
+
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/signup' element={<SignUp/>}/>
                 
             </Routes>
         </Suspense>

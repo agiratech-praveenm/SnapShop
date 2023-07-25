@@ -1,13 +1,20 @@
 import React,{useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Container, Toolbar, Typography, Icon, Paper, Box, Menu } from '@mui/material';
 import AdbIcon from '@mui/icons-material/Adb';
+import './navbar.css';
+
 
 
 
 const NavBar = () => {
 
     const [loggedIn, setLoggedIn] = useState(false);
+    const navigate = useNavigate();
+
+    const goToLogin =()=>{
+        navigate('/login');
+    }
 
     return (
         <div>
@@ -21,11 +28,8 @@ const NavBar = () => {
                     </Box>
 
                     <Box style={{ display: 'flex', alignItems: 'center'}}>
-                        <Typography variant="h6" component="div" sx={{ display: { xs: 'none', md: 'block' }, color: 'white' }} style={{marginRight:"20px"}}>
-                        Pricing
-                        </Typography>
 
-                        <Typography variant="h6" component="div" sx={{ display: { xs: 'none', md: 'block' }, color: 'white' }} style={{marginRight:"20px"}}>
+                        <Typography className="navelement" variant="h6" component="div" sx={{ display: { xs: 'none', md: 'block' }, color: 'white' }} style={{marginRight:"20px", cursor: "pointer"}}>
                         Cart
                         </Typography>
 
@@ -35,9 +39,11 @@ const NavBar = () => {
                                 Username
                             </Typography>
                             :
-                            <Typography variant="h6" component="div" sx={{ display: { xs: 'none', md: 'block' }, color: 'white' }} style={{marginRight:"20px"}}>
+                            
+                            <Typography variant="h6" className="navelement" component="div" sx={{ display: { xs: 'none', md: 'block' }, color: 'white' }} style={{marginRight:"20px",cursor: "pointer"}} onClick={goToLogin}>
                                 Login
                             </Typography>
+                            
                         }
                         
                     </Box> 
