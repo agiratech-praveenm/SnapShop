@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useReducer, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,8 +13,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
-import {setUser} from '../../redux/userSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import { setUser, selectUser } from '../../redux/userSlice';
+
 
 const initialState = {
     userName: '',
@@ -39,10 +40,19 @@ const SignUp=()=> {
 
   const navigate=useNavigate();
   const dispatch=useDispatch();
+  const user = useSelector(selectUser);
   const [state, setDispatch] = useReducer(reducer, initialState);
+  const [error, setError] = useState('');
+  const [passwordMatch, setPasswordMatch] = useState(true); // Step 1
+
 
   const handleChange=(event)=>{
     const {name, value} = event.target;
+
+    if (name === 'confirmPassword') {
+      setPasswordMatch(value === state.password); // Step 2
+    }
+
     setDispatch({type: 'CHANGE_FIELD', field: name,value});
   };
 
@@ -54,13 +64,23 @@ const SignUp=()=> {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const user = {
+    const newUser = {
       userName: data.get('userName'),
       email: data.get('email'),
       address: data.get('address'),
       password: data.get('password')
     };
-    dispatch(setUser(user));
+
+    const isEmailRegistered = user.some((existingUser) => existingUser.email === newUser.email);
+    if (isEmailRegistered) {
+      setError('Email is already registered');
+      return; // Abort signup process
+    }
+
+    const updatedUserArray = [...user,newUser];
+    dispatch(setUser(updatedUserArray));
+
+    navigate('/login');
   };
 
   return (
@@ -145,11 +165,16 @@ const SignUp=()=> {
                   id="confirmPassword"
                   autoComplete="new-password"
                   value={state.confirmPassword}
-                  onChange={handleChange}
+                  onChange={handleChange} 
+                  error={!passwordMatch} // Step 3: Add error prop
+                  helperText={!passwordMatch && 'Passwords do not match'} 
                 />
               </Grid>
               
             </Grid>
+            {
+              error ? <p style={{marginLeft: '95px', marginBottom:'0', color:'red'}}>{error}</p> : <></>
+            }
             <Button
               type="submit"
               fullWidth

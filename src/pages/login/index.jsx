@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,6 +19,7 @@ const defaultTheme = createTheme();
 const Login=()=> {
 
   const navigate = useNavigate();
+  const [error, setError] = useState();
   
   const goToSignup =()=>{
     navigate('/signup');
@@ -27,10 +28,19 @@ const Login=()=> {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get('email');
+    const password = data.get('password');
+    
+    const userData = JSON.parse(localStorage.getItem('user'));
+    const user = userData.find((u)=> u.email === email && u.password === password)
+    console.log("LOGGED: ",JSON.stringify(user))
+
+    if(!user)
+      setError('No such user. Please signup first');
+    else{
+      localStorage.setItem('loggedUser', JSON.stringify(user));
+      navigate('/homepage')
+    }
   };
 
   return (
@@ -76,6 +86,9 @@ const Login=()=> {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            {
+              error ? <p>{error}</p> : <></>
+            }
             <Button
               type="submit"
               fullWidth
