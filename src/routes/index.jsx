@@ -20,7 +20,7 @@ function RoutePath(){
     return (
         <Suspense>
             <Routes>
-            <Route path="/" element={<Navigate to="/homepage" replace />} />
+            <Route path="/" element={<Navigate to="/signup" replace />} />
 
             <Route path='/' element={<Layout/>}>
                 <Route path='/homepage' element={<PrivateRoute element={<HomePage />} />} />
