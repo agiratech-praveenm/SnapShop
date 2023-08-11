@@ -37,7 +37,8 @@ const Homepage=()=>{
     }, [data]); 
 
     const handleDispatch=(product)=>{
-        dispatch(addToCart(product));
+        let userEmail = JSON.parse(localStorage.getItem('loggedUser')).email
+        dispatch(addToCart({product, userEmail}));
         alert('Product Added to Cart');
     }
 

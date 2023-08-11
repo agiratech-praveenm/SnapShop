@@ -4,7 +4,8 @@ import { AppBar, Container, Toolbar, Typography, Icon, Paper, Badge, Box, Menu, 
 import AdbIcon from '@mui/icons-material/Adb';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import './navbar.css';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch} from 'react-redux';
+import { clearCart } from '../../redux/cartSlice';
 
 
 
@@ -15,6 +16,11 @@ const NavBar = () => {
     const [loggedUserName, setLoggedUserName] = useState('');
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+    const loggedUserEmail = loggedUser.email;
+    console.log('logged Mail:',loggedUserEmail)
 
     const goToLogin =()=>{
         navigate('/login');
@@ -29,6 +35,9 @@ const NavBar = () => {
     };
 
     const handleLogout=()=>{
+        const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+        let userEmail = loggedUser.email;
+        // dispatch(clearCart(userEmail));
         localStorage.removeItem('loggedUser');
         navigate('/login');
     }
@@ -42,8 +51,7 @@ const NavBar = () => {
     }
 
     useEffect(()=> {
-        const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
-        console.log("LOGGED USER: ", loggedUser);
+        
         if(loggedUser){
             setLoggedIn(true);
             setLoggedUserName(loggedUser.userName)
@@ -51,7 +59,9 @@ const NavBar = () => {
     });
 
     const cartItems = useSelector(state => state.cart.items);
-    const uniqueProductCount = cartItems.length;
+    const userCartItems = cartItems.filter(item => item.userEmail === loggedUserEmail);
+    console.log('Usercart',userCartItems)
+    const uniqueProductCount = userCartItems.length;
 
     return (
         <div>

@@ -9,41 +9,40 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
-      const product = action.payload;
-      const existingItem = state.items.find(item => item.id === product.id);
+      const { product, userEmail } = action.payload;
+      const existingItem = state.items.find(item => item?.id === product?.id);
 
       if (existingItem) {
-        // If the item is already in the cart, increase the quantity
         existingItem.quantity += 1;
       } else {
-        // Otherwise, add the product to the cart with a quantity of 1
-        state.items.push({ ...product, quantity: 1 });
+        state.items.push({ ...product, quantity: 1, userEmail });
       }
       localStorage.setItem('cart', JSON.stringify(state.items));
     },
     removeFromCart: (state, action) => {
-      const productId = action.payload;
-      state.items = state.items.filter(item => item.id !== productId); // Remove product from cart
+      const { productId, userEmail } = action.payload;
+      state.items = state.items.filter(item => item?.id !== productId && item?.userEmail === userEmail);
       localStorage.setItem('cart', JSON.stringify(state.items));
     },
     incrementProductCount: (state, action) => {
-        const productId = action.payload;
-        const product = state.items.find(item => item.id === productId);
-        if(product){
+        const { productId, userEmail } = action.payload;
+        const product = state.items.find(item => item?.id === productId && item?.userEmail === userEmail);
+        if (product) {
             product.quantity += 1;
         }
         localStorage.setItem('cart', JSON.stringify(state.items));
     },
     decrementProductCount: (state, action) => {
-        const productId = action.payload;
-        const product = state.items.find(item => item.id === productId);
-        if(product && product.quantity > 1){
+        const { productId, userEmail } = action.payload;
+        const product = state.items.find(item => item?.id === productId && item?.userEmail === userEmail);
+        if (product && product.quantity > 1) {
             product.quantity -= 1;
         }
         localStorage.setItem('cart', JSON.stringify(state.items));
     },
-    clearCart: state => {
-      state.items = []; // Clear the entire cart
+    clearCart: (state, action) => {
+      const { userEmail } = action.payload;
+      state.items = state.items.filter(item => item?.userEmail !== userEmail);
       localStorage.removeItem('cart');
     },
   },
